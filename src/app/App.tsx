@@ -16,6 +16,8 @@ import { AlertsPage } from '../pages/AlertsPage';
 import { SettingsPage } from '../pages/SettingsPage';
 import { Layout } from '../components/Layout';
 import type { Event, Task } from '../types';
+import { CreateEventPage } from '../pages/CreateEventPage';
+
 
 function MainApp() {
   const { isAuthenticated } = useAuth();
@@ -48,7 +50,7 @@ function MainApp() {
   const handleEventSelect = (event: Event) => {
     setView('event-details');
   };
-
+  const handleCreateEvent = () => setView('create-event');
   const alertBadge = 3;
 
   const getPageTitle = () => {
@@ -60,6 +62,7 @@ function MainApp() {
       case 'approvals': return { title: 'Approvals', subtitle: currentEvent ? `${currentEvent.event_name}` : '' };
       case 'vendors': return { title: 'Vendors', subtitle: currentEvent ? `${currentEvent.event_name}` : '' };
       case 'budget': return { title: 'Budget', subtitle: currentEvent ? `${currentEvent.event_name}` : '' };
+      case 'create-event': return { title: 'Create Event', subtitle: 'Add new wedding event' };
       case 'chat': return { title: 'AI Chat', subtitle: 'Event Operations Copilot' };
       case 'contacts': return { title: 'Contacts', subtitle: 'Event Contacts & Vendors' };
       case 'alerts': return { title: 'Alerts', subtitle: 'Notifications & Risks' };
@@ -81,11 +84,13 @@ function MainApp() {
   };
 
   const renderContent = () => {
-    const eventId = currentEvent?.id || 'evt_001';
+    const eventId = currentEvent?.id || '';
 
     switch (view) {
+      case 'create-event':
+         return <CreateEventPage onBack={() => setView('dashboard')} />;
       case 'dashboard':
-        return <DashboardPage onSelectEvent={handleEventSelect} />;
+        return <DashboardPage onSelectEvent={handleEventSelect} onCreateEvent={handleCreateEvent} />;
       case 'event-details':
         return currentEvent ? (
           <EventDetailsPage event={currentEvent} onNavigate={navigateTo} onBack={handleBack} />

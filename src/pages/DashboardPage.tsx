@@ -9,9 +9,10 @@ import type { Event } from '../types';
 
 interface DashboardPageProps {
   onSelectEvent: (event: Event) => void;
+  onCreateEvent: () => void;
 }
 
-export function DashboardPage({ onSelectEvent }: DashboardPageProps) {
+export function DashboardPage({ onSelectEvent, onCreateEvent }: DashboardPageProps) {
   const { user } = useAuth();
   const { events, activeEvent, setActiveEvent } = useEvents();
   const { getTasksByEvent, getApprovalsByEvent, getVendorsByEvent, getUnreadNotifications } = useAppData();
@@ -42,7 +43,7 @@ export function DashboardPage({ onSelectEvent }: DashboardPageProps) {
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Your Events</h2>
-        <ActionButton variant="primary" icon={<Plus size={16} />} onClick={() => {}}>
+        <ActionButton variant="primary" icon={<Plus size={16} />} onClick={onCreateEvent}>
           Create Event
         </ActionButton>
       </div>
