@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Filter } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import { VendorCard } from '../components/cards/VendorCard';
-import { StatusBadge } from '../app/lib/StatusBadge';
 
 interface VendorBoardPageProps {
   eventId: string;
+  onAddVendor: () => void;
 }
 
-export function VendorBoardPage({ eventId }: VendorBoardPageProps) {
+export function VendorBoardPage({ eventId, onAddVendor }: VendorBoardPageProps) {
   const { getVendorsByEvent } = useAppData();
   const [filter, setFilter] = useState<string>('all');
   const vendors = getVendorsByEvent(eventId);
@@ -17,7 +17,7 @@ export function VendorBoardPage({ eventId }: VendorBoardPageProps) {
   const filteredVendors = filter === 'all' ? vendors : vendors.filter((v) => v.category === filter);
 
   const confirmed = vendors.filter((v) => v.assignment?.status === 'confirmed').length;
-  const pending = vendors.filter((v) => v.assignment?.status === 'assigned').length;
+  const pending = vendors.filter((v) => v.assignment?.status === 'pending').length;
 
   return (
     <div>
@@ -32,27 +32,33 @@ export function VendorBoardPage({ eventId }: VendorBoardPageProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
-        <button
-          onClick={() => setFilter('all')}
-          className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-            filter === 'all' ? 'bg-brand-primary text-white' : 'bg-muted text-muted-foreground'
-          }`}
-        >
-          <Filter size={12} />
-          All ({vendors.length})
-        </button>
-        {categories.map((cat) => (
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
           <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-              filter === cat ? 'bg-brand-primary text-white' : 'bg-muted text-muted-foreground'
+            onClick={() => setFilter('all')}
+            className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              filter === 'all' ? 'bg-brand-primary text-white' : 'bg-muted text-muted-foreground'
             }`}
           >
-            {cat} ({vendors.filter((v) => v.category === cat).length})
+            <Filter size={12} />
+            All ({vendors.length})
           </button>
-        ))}
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                filter === cat ? 'bg-brand-primary text-white' : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              {cat} ({vendors.filter((v) => v.category === cat).length})
+            </button>
+          ))}
+        </div>
+        <button onClick={onAddVendor}
+          className="px-4 py-2 rounded-xl bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition whitespace-nowrap">
+          + Add Vendor
+        </button>
       </div>
 
       <div className="space-y-3">

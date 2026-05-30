@@ -23,6 +23,9 @@ interface AppDataContextType {
   getUnreadNotifications: () => Notification[];
   createTask: (task: Partial<Task>) => Promise<void>;
   refetchTasks: () => void;
+  refetchVendorAssignments: () => void;
+  refetchBudgetItems: () => void;
+  refetchApprovals: () => void;
 }
 
 const AppDataContext = createContext<AppDataContextType>({} as AppDataContextType);
@@ -294,6 +297,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         getTasksByEvent, getApprovalsByEvent, getVendorsByEvent, getBudgetByEvent, getVendorById,
         updateTaskStatus, updateApprovalStatus, markNotificationRead, addChatMessage, getUnreadNotifications,
         createTask, refetchTasks: fetchTasks,
+        createTask, refetchTasks: fetchTasks,
+        refetchBudgetItems: fetchBudgetItems,
+        refetchApprovals: fetchApprovals,
       }}
     >
       {children}

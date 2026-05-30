@@ -17,7 +17,10 @@ import { SettingsPage } from '../pages/SettingsPage';
 import { Layout } from '../components/Layout';
 import type { Event, Task } from '../types';
 import { CreateEventPage } from '../pages/CreateEventPage';
-
+import { CreateTaskPage } from '../pages/CreateTaskPage';
+import { CreateVendorAssignmentPage } from '../pages/CreateVendorAssignmentPage';
+import { CreateBudgetItemPage } from '../pages/CreateBudgetItemPage';
+import { CreateApprovalPage } from '../pages/CreateApprovalPage';
 
 function MainApp() {
   const { isAuthenticated } = useAuth();
@@ -51,6 +54,10 @@ function MainApp() {
     setView('event-details');
   };
   const handleCreateEvent = () => setView('create-event');
+  const handleCreateTask = () => setView('create-task');
+  const handleCreateVendor = () => setView('create-vendor');
+  const handleCreateBudget = () => setView('create-budget');
+  const handleCreateApproval = () => setView('create-approval');
   const alertBadge = 3;
 
   const getPageTitle = () => {
@@ -63,6 +70,10 @@ function MainApp() {
       case 'vendors': return { title: 'Vendors', subtitle: currentEvent ? `${currentEvent.event_name}` : '' };
       case 'budget': return { title: 'Budget', subtitle: currentEvent ? `${currentEvent.event_name}` : '' };
       case 'create-event': return { title: 'Create Event', subtitle: 'Add new wedding event' };
+      case 'create-task': return { title: 'Create Task', subtitle: 'Add new task' };
+      case 'create-vendor': return { title: 'Add Vendor', subtitle: 'Assign vendor to event' };
+      case 'create-budget': return { title: 'Add Budget Item', subtitle: 'Track event expenses' };
+      case 'create-approval': return { title: 'Create Approval', subtitle: 'Request approval' };
       case 'chat': return { title: 'AI Chat', subtitle: 'Event Operations Copilot' };
       case 'contacts': return { title: 'Contacts', subtitle: 'Event Contacts & Vendors' };
       case 'alerts': return { title: 'Alerts', subtitle: 'Notifications & Risks' };
@@ -73,6 +84,7 @@ function MainApp() {
 
   const pageTitle = getPageTitle();
   const showBack = !['dashboard', 'chat', 'contacts', 'alerts', 'settings'].includes(view);
+  
 
   const handleBack = () => {
     if (view === 'event-details' || view === 'task-detail') {
@@ -89,6 +101,8 @@ function MainApp() {
     switch (view) {
       case 'create-event':
          return <CreateEventPage onBack={() => setView('dashboard')} />;
+         case 'create-task':
+  return <CreateTaskPage eventId={eventId} onBack={() => setView('tasks')} />;
       case 'dashboard':
         return <DashboardPage onSelectEvent={handleEventSelect} onCreateEvent={handleCreateEvent} />;
       case 'event-details':
@@ -98,7 +112,8 @@ function MainApp() {
           <DashboardPage onSelectEvent={handleEventSelect} />
         );
       case 'tasks':
-        return <TaskListPage eventId={eventId} onTaskClick={handleTaskClick} />;
+        case 'tasks':
+  return <TaskListPage eventId={eventId} onTaskClick={handleTaskClick} onCreateTask={handleCreateTask} />;
       case 'task-detail':
         return selectedTask ? (
           <TaskDetailPage task={selectedTask} onBack={handleBack} />
@@ -106,11 +121,17 @@ function MainApp() {
           <TaskListPage eventId={eventId} onTaskClick={handleTaskClick} />
         );
       case 'approvals':
-        return <ApprovalBoardPage eventId={eventId} />;
+  return <ApprovalBoardPage eventId={eventId} onCreateApproval={handleCreateApproval} />;
+case 'create-approval':
+  return <CreateApprovalPage eventId={eventId} onBack={() => setView('approvals')} />;
       case 'vendors':
-        return <VendorBoardPage eventId={eventId} />;
+  return <VendorBoardPage eventId={eventId} onAddVendor={handleCreateVendor} />;
+case 'create-vendor':
+  return <CreateVendorAssignmentPage eventId={eventId} onBack={() => setView('vendors')} />;
       case 'budget':
-        return <BudgetPage eventId={eventId} />;
+  return <BudgetPage eventId={eventId} onAddBudget={handleCreateBudget} />;
+case 'create-budget':
+  return <CreateBudgetItemPage eventId={eventId} onBack={() => setView('budget')} />;
       case 'chat':
         return <ChatPage />;
       case 'contacts':

@@ -1,13 +1,14 @@
-import { DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { useAppData } from '../context/AppDataContext';
 import { ProgressBar } from '../app/lib/ProgressBar';
 import { StatusBadge } from '../app/lib/StatusBadge';
 
 interface BudgetPageProps {
   eventId: string;
+  onAddBudget: () => void;
 }
 
-export function BudgetPage({ eventId }: BudgetPageProps) {
+export function BudgetPage({ eventId, onAddBudget }: BudgetPageProps) {
   const { getBudgetByEvent } = useAppData();
   const budget = getBudgetByEvent(eventId);
 
@@ -20,7 +21,14 @@ export function BudgetPage({ eventId }: BudgetPageProps) {
     const items = budget.filter((b) => b.category === cat);
     const allocated = items.reduce((s, b) => s + b.allocated_amount, 0);
     const spent = items.reduce((s, b) => s + b.spent_amount, 0);
-    return { category: cat, allocated, spent, remaining: allocated - spent, utilization: allocated > 0 ? Math.round((spent / allocated) * 100) : 0, count: items.length };
+    return {
+      category: cat,
+      allocated,
+      spent,
+      remaining: allocated - spent,
+      utilization: allocated > 0 ? Math.round((spent / allocated) * 100) : 0,
+      count: items.length,
+    };
   });
 
   const formatINR = (amount: number) =>
@@ -28,6 +36,16 @@ export function BudgetPage({ eventId }: BudgetPageProps) {
 
   return (
     <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Budget</h2>
+        <button
+          onClick={onAddBudget}
+          className="px-4 py-2 rounded-xl bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition"
+        >
+          + Add Budget Item
+        </button>
+      </div>
+
       <div className="bg-card border border-border rounded-lg p-5 mb-6">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-sm text-muted-foreground">Total Budget</h2>

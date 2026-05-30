@@ -17,7 +17,13 @@ const statusGroups: { key: string; label: string; statuses: TaskStatus[]; varian
   { key: 'not_started', label: 'Not Started', statuses: ['not_started'], variant: 'pending' },
 ];
 
-export function TaskListPage({ eventId, onTaskClick }: TaskListPageProps) {
+interface TaskListPageProps {
+  eventId: string;
+  onTaskClick: (task: Task) => void;
+  onCreateTask: () => void;
+}
+
+export function TaskListPage({ eventId, onTaskClick, onCreateTask }: TaskListPageProps) {
   const { getTasksByEvent } = useAppData();
   const [filter, setFilter] = useState<string>('all');
   const tasks = getTasksByEvent(eventId);
@@ -26,6 +32,13 @@ export function TaskListPage({ eventId, onTaskClick }: TaskListPageProps) {
 
   return (
     <div>
+      <div className="flex justify-between items-center mb-4">
+  <h2 className="text-lg font-semibold">Tasks</h2>
+  <button onClick={onCreateTask}
+    className="px-4 py-2 rounded-xl bg-brand-primary text-white text-sm font-medium hover:opacity-90 transition">
+    + Add Task
+  </button>
+</div>
       <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-2">
         <button
           onClick={() => setFilter('all')}
