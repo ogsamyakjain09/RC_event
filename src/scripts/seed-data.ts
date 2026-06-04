@@ -16,43 +16,58 @@ async function seed() {
   try {
     await pb.admins.authWithPassword('admin@runningchores.com', 'Admin@12345');
     console.log('✅ Authenticated');
-  } catch (err) {
-    console.error('❌ Auth failed');
+  } catch (err: any) {
+    console.error('❌ Auth failed:', err.message);
+    console.log('Check if your Railway URL is correct and you created the admin account.');
     return;
   }
 
-  // Seed Users (Manually creating them in auth collection is tricky via SDK, 
-  // but we can create them as records if the collection is 'base', 
-  // however 'users' is usually 'auth' type).
-  // For 'auth' collections, we use .create() with password.
+  // Helper to remove invalid IDs (PocketBase IDs must be 15 chars alphanumeric)
+  const clean = (obj: any) => {
+    const { id, ...rest } = obj;
+    return rest;
+  };
+
+  // Seed Users
   for (const user of users) {
     try {
-      await pb.collection('users').create({
-        ...user,
-        password: 'Password123!',
-        passwordConfirm: 'Password123!',
-        emailVisibility: true,
-      });
-      console.log(`✅ User ${user.email} created`);
+      // For the users collection, we use .create
+      // We check if it exists first by email
+      try {
+        await pb.collection('users').getFirstListItem(`email="${user.email}"`);
+        console.log(`ℹ️ User ${user.email} already exists`);
+      } catch (e) {
+        await pb.collection('users').create({
+          ...clean(user),
+          password: 'Password123!',
+          passwordConfirm: 'Password123!',
+          emailVisibility: true,
+        });
+        console.log(`✅ User ${user.email} created`);
+      }
     } catch (e: any) {
-        console.log(`ℹ️ User ${user.email} exists or error: ${e.message}`);
+        console.log(`❌ Error creating user ${user.email}: ${e.message}`);
     }
   }
 
   // Seed Events
   for (const event of events) {
     try {
-      await pb.collection('events').create(event);
+      await pb.collection('events').create(clean(event));
       console.log(`✅ Event ${event.event_name} created`);
-    } catch (e) {}
+    } catch (e: any) {
+      console.log(`❌ Error creating event: ${e.message}`);
+    }
   }
 
   // Seed Vendors
   for (const vendor of vendors) {
     try {
-      await pb.collection('vendors').create(vendor);
+      await pb.collection('vendors').create(clean(vendor));
       console.log(`✅ Vendor ${vendor.name} created`);
-    } catch (e) {}
+    } catch (e: any) {
+      console.log(`❌ Error creating vendor: ${e.message}`);
+    }
   }
 
   console.log('🎉 Seeding complete!');

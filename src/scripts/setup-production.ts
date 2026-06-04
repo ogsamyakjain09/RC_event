@@ -10,24 +10,28 @@ async function setup() {
   console.log(`Connecting to PocketBase at: ${pbUrl}`);
   
   try {
+    const health = await pb.health.check();
+    console.log('✅ Connectivity Check (Health):', JSON.stringify(health));
+  } catch (err: any) {
+    console.error('❌ Internal Connectivity Check Failed:', err.message);
+  }
+
+  try {
+    console.log('Attempting admin login...');
     // Login as admin
-    await pb.admins.authWithPassword('admin@runningchores.com', 'Admin@12345');
-    console.log('✅ Authenticated as admin');
-  } catch (err) {
-    console.error('❌ Failed to authenticate as admin. Make sure the admin user exists.');
+    const authData = await pb.admins.authWithPassword('admin@runningchores.com', 'Admin@12345');
+    console.log('✅ Authenticated as admin:', authData.admin.email);
+  } catch (err: any) {
+    console.error('❌ Failed to authenticate as admin.');
+    console.log('Error Status:', err.status);
+    console.log('Error Message:', err.message);
+    console.log('Error Data:', JSON.stringify(err.data));
+    console.log('DEBUG: Make sure you created the admin at the Railway URL /_/');
+    console.log('DEBUG: Current VITE_PB_URL is:', pbUrl);
     return;
   }
 
   const collections = [
-    {
-      name: 'users',
-      fields: [
-        { name: 'name', type: 'text' },
-        { name: 'role', type: 'text' },
-        { name: 'organization_id', type: 'text' },
-        { name: 'is_active', type: 'bool' },
-      ],
-    },
     {
       name: 'events',
       fields: [

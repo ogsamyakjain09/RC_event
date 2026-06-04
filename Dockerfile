@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 # Define the PocketBase version
-ARG PB_VERSION=0.22.14
+ARG PB_VERSION=0.25.0
 
 # Install dependencies
 RUN apk add --no-cache \
