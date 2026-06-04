@@ -30,19 +30,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const login = useCallback(async (email: string, password: string) => {
-    // This calls PocketBase real login API
-    const authData = await pb.collection('users').authWithPassword(email, password);
-    
-    const loggedInUser: User = {
-      id: authData.record.id,
-      email: authData.record.email,
-      name: authData.record.name,
-      role: authData.record.role,
-      organization_id: authData.record.organization_id,
-      is_active: authData.record.is_active,
-    };
-    
-    setUser(loggedInUser);
+    console.log('Attempting login for:', email);
+    console.log('Target PocketBase URL:', pb.baseUrl);
+    try {
+      // This calls PocketBase real login API
+      const authData = await pb.collection('users').authWithPassword(email, password);
+      console.log('Login successful for:', email);
+      
+      const loggedInUser: User = {
+        id: authData.record.id,
+        email: authData.record.email,
+        name: authData.record.name,
+        role: authData.record.role,
+        organization_id: authData.record.organization_id,
+        is_active: authData.record.is_active,
+      };
+      
+      setUser(loggedInUser);
+    } catch (err: any) {
+      console.error('Login error details:', {
+        status: err.status,
+        message: err.message,
+        data: err.data
+      });
+      throw err;
+    }
   }, []);
 
   const logout = useCallback(() => {

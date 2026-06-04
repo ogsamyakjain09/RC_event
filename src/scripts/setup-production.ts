@@ -19,13 +19,14 @@ async function setup() {
   try {
     console.log('Attempting admin login...');
     // Login as admin
+    // In PB v0.23+, authData returns 'record' instead of 'admin' for admin auth as well
     const authData = await pb.admins.authWithPassword('admin@runningchores.com', 'Admin@12345');
-    console.log('✅ Authenticated as admin:', authData.admin.email);
+    console.log('✅ Authenticated as admin:', authData?.record?.email || authData?.admin?.email || 'Success');
   } catch (err: any) {
     console.error('❌ Failed to authenticate as admin.');
-    console.log('Error Status:', err.status);
-    console.log('Error Message:', err.message);
-    console.log('Error Data:', JSON.stringify(err.data));
+    console.log('Error Status:', err?.status || 'N/A');
+    console.log('Error Message:', err?.message || 'N/A');
+    console.log('Error Data:', JSON.stringify(err?.data || {}));
     console.log('DEBUG: Make sure you created the admin at the Railway URL /_/');
     console.log('DEBUG: Current VITE_PB_URL is:', pbUrl);
     return;
