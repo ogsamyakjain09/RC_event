@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "setup:pb": "tsx src/scripts/setup-production.ts",
+    "seed:pb": "tsx src/scripts/seed-data.ts"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -44,6 +46,7 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "date-fns": "3.6.0",
+    "dotenv": "^16.4.7",
     "embla-carousel-react": "8.6.0",
     "input-otp": "1.4.2",
     "lucide-react": "0.487.0",
