@@ -7,32 +7,48 @@ import { StatusBadge } from '../app/lib/StatusBadge';
 
 export function SettingsPage() {
   const { user, logout } = useAuth();
-  const { getUnreadNotifications } = useAppData();
-  const unreadCount = getUnreadNotifications().length;
+  const appData = useAppData();
+  
+  // Safely get unread count
+  const unreadCount = appData?.getUnreadNotifications ? appData.getUnreadNotifications().length : 0;
+  
   const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('rc-events-theme') === 'dark';
+    try {
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('rc-events-theme') === 'dark';
+      }
+    } catch (e) {
+      console.warn('LocalStorage access failed:', e);
     }
     return false;
   });
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
+    try {
+      const root = document.documentElement;
+      if (isDark) {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      localStorage.setItem('rc-events-theme', isDark ? 'dark' : 'light');
+    } catch (e) {
+      console.warn('Theme update failed:', e);
     }
-    localStorage.setItem('rc-events-theme', isDark ? 'dark' : 'light');
   }, [isDark]);
 
   const toggleTheme = () => setIsDark(prev => !prev);
 
-  if (!user) return null;
+  if (!user) {
+    console.warn('SettingsPage: No user found in AuthContext');
+    return <div className="p-4 text-center">Loading user profile...</div>;
+  }
 
-  const roleBadgeVariant = user.role === 'admin' ? 'error'
-    : user.role === 'vendor' ? 'info'
-    : user.role === 'wedding_couple' ? 'success'
+  // Safe role access
+  const userRole = user.role || 'user';
+  const roleBadgeVariant = userRole === 'admin' ? 'error'
+    : userRole === 'vendor' ? 'info'
+    : userRole === 'wedding_couple' ? 'success'
     : 'pending';
 
   return (
@@ -43,22 +59,28 @@ export function SettingsPage() {
             <User size={28} className="text-brand-primary" />
           </div>
           <div className="flex-1">
-            <h2 className="font-bold text-lg">{user.name}</h2>
-            <StatusBadge variant={roleBadgeVariant}>{user.role.replace('_', ' ')}</StatusBadge>
+            <h2 className="font-bold text-lg">{user.name || 'Anonymous User'}</h2>
+            <StatusBadge variant={roleBadgeVariant}>{userRole.replace('_', ' ')}</StatusBadge>
             <p className="text-xs text-muted-foreground mt-1">{user.email}</p>
           </div>
         </div>
       </div>
 
       <div className="space-y-2 mb-6">
-        <SettingRow icon={Shield} label="Role" value={user.role.replace('_', ' ')} />
+        <SettingRow icon={Shield} label="Role" value={userRole.replace('_', ' ')} />
         <SettingRow icon={Building2} label="Organization" value="Wedding Dreams Pvt. Ltd." />
         <SettingRow icon={Bell} label="Notifications" value={`${unreadCount} unread`} />
         <SettingRow
           icon={LayoutDashboard}
           label="Design Library"
           value=""
-          onClick={() => window.open('/docs', '_blank')}
+          onClick={() => {
+            try {
+               window.open('/docs', '_blank');
+            } catch (e) {
+               console.error('Failed to open docs:', e);
+            }
+          }}
         />
         <SettingRow
           icon={isDark ? Moon : Sun}
