@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import pb from '../pocketbase';
 import { useEvents } from '../context/EventContext';
+import { useAuth } from '../context/AuthContext';
 
 interface CreateEventPageProps {
   onBack: () => void;
 }
 
 export function CreateEventPage({ onBack }: CreateEventPageProps) {
+  const { user } = useAuth();
   const { refetchEvents } = useEvents();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,7 +25,6 @@ export function CreateEventPage({ onBack }: CreateEventPageProps) {
     currency: 'INR',
     status: 'planning',
     readiness_score: 0,
-    organization_id: 'org_001',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -35,6 +36,12 @@ export function CreateEventPage({ onBack }: CreateEventPageProps) {
       setError('Please fill in event name, couple name, and date!');
       return;
     }
+    
+    if (!user) {
+      setError('You must be logged in to create an event.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
@@ -43,6 +50,8 @@ export function CreateEventPage({ onBack }: CreateEventPageProps) {
         ...form,
         total_guests_expected: Number(form.total_guests_expected),
         total_budget: Number(form.total_budget),
+        organization_id: user.organization_id,
+        created_by: user.id,
       });
       await refetchEvents(); // Refresh events list
       onBack(); // Go back to dashboard
