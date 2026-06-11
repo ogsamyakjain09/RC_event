@@ -1,74 +1,80 @@
 # RC Events - AI-Powered Event Operations Platform
 
-RC Events is a comprehensive operational command center designed for professional wedding planners and event management companies. It combines a robust design system with a powerful backend to manage events, tasks, vendors, and budgets.
+RC Events is a comprehensive operational command center designed for professional wedding planners and event management companies. It combines a robust design system with a powerful backend to manage events, tasks, vendors, budgets, approvals, and communications — all from a mobile-first interface.
 
-## 🚀 Live Demo
-- **Frontend (Vercel):** [Your Vercel URL]
-- **Backend (Railway):** [Your Railway URL]
+## Tech Stack
 
-## 🛠 Tech Stack
-- **Frontend:** React 18, TypeScript, Tailwind CSS 4, Radix UI, Lucide Icons, Vite.
-- **Backend:** PocketBase (SQLite, Auth, REST API).
-- **Deployment:** Vercel (Frontend), Railway (Backend with Docker).
+- **Frontend:** React 18, TypeScript, Tailwind CSS 4, Radix UI/shadcn, Lucide Icons, Recharts, Vite 6
+- **Backend:** PocketBase 0.25 (SQLite, Auth, REST API)
+- **Deployment:** Vercel (Frontend), Railway (Backend with Docker)
 
-## 📦 Features
-- **Operational Dashboard:** Real-time metrics, event readiness tracking, and status monitoring.
-- **Task Management:** Categorized tasks with priority levels and vendor assignments.
-- **Vendor Management:** Integrated directory with quick actions (Call, WhatsApp, Email).
-- **Budget Tracking:** Allocated vs. Spent monitoring with approval workflows.
-- **AI Copilot:** An AI-themed interface for operational insights and quick actions.
-- **Dark Mode:** Full support optimized for dashboard environments.
+## Features
 
----
+- **Operational Dashboard** — Real-time metrics, event readiness tracking, status monitoring
+- **Task Management** — Categorize, filter, and update tasks with priority and vendor assignment
+- **Vendor Management** — Directory with Call/WhatsApp/Email quick actions, category filtering
+- **Budget Tracking** — Allocated vs. Spent analysis with utilization warnings
+- **Approval Workflow** — Request/Approve/Reject flow with overdue tracking
+- **AI Copilot Chat** — Intent-based query interface for operational insights
+- **Contacts Management** — Searchable contact directory with grouped display
+- **Calendar** — Monthly view with event markers and upcoming tasks
+- **Alerts & Notifications** — Combined alerts, approvals, risks, and calendar views
+- **Dark Mode** — Full dark/light theme support with localStorage persistence
 
-## 🏗 Setup & Deployment Guide
+## Quick Start
 
-### 1. Backend (PocketBase on Railway)
-The backend runs as a Dockerized PocketBase instance.
-1.  **Create Service:** Deploy the `Dockerfile` to Railway.
-2.  **Add Volume:** Create a Railway Volume and mount it to `/pb/pb_data` to ensure data persists across restarts.
-3.  **Environment:** Set `PORT=8080` in Railway variables.
-4.  **Admin UI:** Access `https://your-backend.up.railway.app/_/` to create your first admin.
-
-### 2. Frontend (Vercel)
-1.  **Environment Variables:** Add `VITE_PB_URL=https://your-backend.up.railway.app` in Vercel settings.
-2.  **Build:** Vercel will automatically build and deploy from the `features` branch.
-
-### 3. Database Initialization
-Once the backend is live, run these commands locally to set up the schema and sample data:
 ```bash
+# Install dependencies
 npm install
-npm run setup:pb  # Creates collections/tables
-npm run seed:pb   # Populates sample users, events, and vendors
+
+# Start development server
+npm dev
+
+# App runs at http://localhost:5173
 ```
 
----
+## Environment Setup
 
-## 🔐 Credentials (Sample Data)
-All accounts use the password: **`Password123!`**
+Create a `.env` file in the project root:
 
-| Role | Email | Use Case |
-| :--- | :--- | :--- |
-| **Admin** | `parag@runningchores.com` | Full system management |
-| **Vendor** | `sharma@decorators.com` | Assigned tasks & status updates |
-| **Couple** | `couple@gmail.com` | View event progress & approvals |
-| **Planner** | `priya@runningchores.com` | Event & task operations |
+```env
+VITE_PB_URL=http://127.0.0.1:8090
+```
 
----
+## PocketBase Setup
 
-## 📂 Project Structure
-- `src/app/`: Core logic and shared component library.
-- `src/components/`: Layout and specialized UI components.
-- `src/context/`: Global state management (Auth, AppData, Events).
-- `src/pages/`: Main view components.
-- `src/scripts/`: Database setup and seeding scripts.
-- `src/data/`: Sample JSON data used for seeding.
-- `Dockerfile`: Deployment configuration for the backend.
+```bash
+# Start PocketBase with Docker
+docker-compose up -d
 
-## 📄 Documentation
+# Create admin at http://localhost:8090/_/
+
+# Setup collections and seed data
+npm run setup:pb
+npm run seed:pb
+```
+
+## Sample Credentials
+
+All sample accounts use password: **`Password123!`**
+
+| Role | Email |
+|---|---|
+| Admin | parag@runningchores.com |
+| Vendor | sharma@decorators.com |
+| Wedding Couple | couple@gmail.com |
+| Planner | priya@runningchores.com |
+| Coordinator | rajk@runningchores.com |
+
+## Build for Production
+
+```bash
+npm run build
+# Output in dist/
+```
+
+## Documentation
+
+- [Full Project Documentation](./PROJECT_DOCUMENTATION.md)
 - [Design System Guide](./DESIGN_SYSTEM.md)
 - [Contacts Management](./CONTACTS_PAGE.md)
-- [Dashboard Metrics](./DASHBOARD_METRICS.md)
-
----
-**Built for excellence in event operations.**

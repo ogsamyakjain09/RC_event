@@ -7,6 +7,7 @@ import vendors from '../data/vendors.json';
 import budgetItems from '../data/budgetItems.json';
 import approvals from '../data/approvals.json';
 import vendorAssignments from '../data/vendorAssignments.json';
+import notifications from '../data/notifications.json';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ async function seed() {
     { name: 'budget_items', data: budgetItems },
     { name: 'approvals', data: approvals },
     { name: 'vendor_assignments', data: vendorAssignments },
+    { name: 'notifications', data: notifications },
   ];
 
   for (const col of collections) {

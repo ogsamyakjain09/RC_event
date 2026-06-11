@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { EventProvider, useEvents } from '../context/EventContext';
-import { AppDataProvider } from '../context/AppDataContext';
+import { AppDataProvider, useAppData } from '../context/AppDataContext';
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { EventDetailsPage } from '../pages/EventDetailsPage';
@@ -25,6 +25,7 @@ import { CreateApprovalPage } from '../pages/CreateApprovalPage';
 function MainApp() {
   const { isAuthenticated } = useAuth();
   const { activeEvent } = useEvents();
+  const { getUnreadNotifications } = useAppData();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [view, setView] = useState<string>('dashboard');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -58,7 +59,7 @@ function MainApp() {
   const handleCreateVendor = () => setView('create-vendor');
   const handleCreateBudget = () => setView('create-budget');
   const handleCreateApproval = () => setView('create-approval');
-  const alertBadge = 3;
+  const alertBadge = getUnreadNotifications().length;
 
   const getPageTitle = () => {
     switch (view) {
@@ -112,7 +113,6 @@ function MainApp() {
           <DashboardPage onSelectEvent={handleEventSelect} />
         );
       case 'tasks':
-        case 'tasks':
   return <TaskListPage eventId={eventId} onTaskClick={handleTaskClick} onCreateTask={handleCreateTask} />;
       case 'task-detail':
         return selectedTask ? (

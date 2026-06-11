@@ -8,6 +8,7 @@ import type { Task, TaskStatus } from '../types';
 interface TaskListPageProps {
   eventId: string;
   onTaskClick: (task: Task) => void;
+  onCreateTask: () => void;
 }
 
 const statusGroups: { key: string; label: string; statuses: TaskStatus[]; variant: 'success' | 'info' | 'error' | 'pending' | 'warning' }[] = [
@@ -16,12 +17,6 @@ const statusGroups: { key: string; label: string; statuses: TaskStatus[]; varian
   { key: 'blocked', label: 'Blocked', statuses: ['blocked'], variant: 'error' },
   { key: 'not_started', label: 'Not Started', statuses: ['not_started'], variant: 'pending' },
 ];
-
-interface TaskListPageProps {
-  eventId: string;
-  onTaskClick: (task: Task) => void;
-  onCreateTask: () => void;
-}
 
 export function TaskListPage({ eventId, onTaskClick, onCreateTask }: TaskListPageProps) {
   const { getTasksByEvent } = useAppData();

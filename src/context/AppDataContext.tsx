@@ -95,8 +95,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         id: r.id,
         event_id: r.event_id,
         vendor_id: r.vendor_id,
+        task_id: r.task_id || '',
+        organization_id: r.organization_id || '',
         status: r.status,
-        notes: r.notes,
+        confirmed_at: r.confirmed_at,
+        start_date: r.start_date,
+        end_date: r.end_date,
       })) as VendorAssignment[];
       setVendorAssignments(mapped);
       console.log('Vendor assignments fetched:', mapped.length);
@@ -114,10 +118,12 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         organization_id: r.organization_id,
         category: r.category,
         vendor_id: r.vendor_id,
+        description: r.description || '',
         allocated_amount: r.allocated_amount,
+        estimated_amount: r.estimated_amount || r.allocated_amount,
         spent_amount: r.spent_amount,
         status: r.status,
-        notes: r.notes,
+        payment_date: r.payment_date,
       })) as BudgetItem[];
       setBudgetItems(mapped);
       console.log('Budget items fetched:', mapped.length);
@@ -133,14 +139,17 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         id: r.id,
         event_id: r.event_id,
         organization_id: r.organization_id,
+        approval_type: r.approval_type || '',
         title: r.title,
         description: r.description,
         requested_by: r.requested_by,
+        approver_id: r.approver_id || '',
         status: r.status,
         approval_date: r.approval_date,
         approval_comments: r.approval_comments,
-        amount: r.amount,
+        due_date: r.due_date || '',
         created_at: r.created,
+        metadata: r.metadata,
       })) as Approval[];
       setApprovals(mapped);
       console.log('Approvals fetched:', mapped.length);
@@ -154,13 +163,14 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       const records = await pb.collection('notifications').getFullList();
       const mapped = records.map((r) => ({
         id: r.id,
-        event_id: r.event_id,
         organization_id: r.organization_id,
+        user_id: r.user_id,
+        type: r.type,
         title: r.title,
         body: r.body,
-        type: r.type,
+        related_entity_type: r.related_entity_type,
+        related_entity_id: r.related_entity_id,
         is_read: r.is_read,
-        user_id: r.user_id,
         created_at: r.created,
       })) as Notification[];
       setNotifications(mapped);
@@ -296,8 +306,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         tasks, vendors, vendorAssignments, approvals, budgetItems, notifications, chatMessages,
         getTasksByEvent, getApprovalsByEvent, getVendorsByEvent, getBudgetByEvent, getVendorById,
         updateTaskStatus, updateApprovalStatus, markNotificationRead, addChatMessage, getUnreadNotifications,
-        createTask, refetchTasks: fetchTasks,
-        createTask, refetchTasks: fetchTasks,
+        createTask,
+        refetchTasks: fetchTasks,
+        refetchVendorAssignments: fetchVendorAssignments,
         refetchBudgetItems: fetchBudgetItems,
         refetchApprovals: fetchApprovals,
       }}
